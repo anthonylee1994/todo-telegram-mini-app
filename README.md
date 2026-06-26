@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# Todo Telegram Mini App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一個簡單嘅任務清單 Mini App，喺 Telegram 入面即開即用。
 
-Currently, two official plugins are available:
+## 特點
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- ✅ 純前端，無需後端伺服器
+- ✅ 支援 Telegram WebAuth
+- ✅ 任務篩選（全部 / 今日 / 今週 / 過期）
+- ✅ 日期時間過期提示
+- ✅ 響應式設計
 
-## React Compiler
+## 技術棧
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite
+- Chakra UI v3
+- Zustand (狀態管理)
+- Axios (API 呼叫)
 
-## Expanding the ESLint configuration
+## 開發
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# 安裝依賴
+pnpm install
 
-```js
-export default defineConfig([
-    globalIgnores(["dist"]),
-    {
-        files: ["**/*.{ts,tsx}"],
-        extends: [
-            // Other configs...
-
-            // Remove tseslint.configs.recommended and replace with this
-            tseslint.configs.recommendedTypeChecked,
-            // Alternatively, use this for stricter rules
-            tseslint.configs.strictTypeChecked,
-            // Optionally, add this for stylistic rules
-            tseslint.configs.stylisticTypeChecked,
-
-            // Other configs...
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-]);
+# 啟動開發伺服器
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 環境變數
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+喺 `.env` 檔案度設定：
 
-export default defineConfig([
-    globalIgnores(["dist"]),
-    {
-        files: ["**/*.{ts,tsx}"],
-        extends: [
-            // Other configs...
-            // Enable lint rules for React
-            reactX.configs["recommended-typescript"],
-            // Enable lint rules for React DOM
-            reactDom.configs.recommended,
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-]);
+```bash
+VITE_API_URL=your-api-url
 ```
+
+## 結構
+
+```bash
+# 建構生產版本
+pnpm build
+
+# 預覽建構結果
+pnpm preview
+```
+
+## 專案結構
+
+```
+src/
+├── api/          # API 呼叫
+├── components/    # React 組件
+├── hooks/         # Custom hooks
+├── stores/        # Zustand 狀態管理
+├── types/         # TypeScript 類型定義
+└── utils/         # 工具函數
+```
+
+## 授權
+
+MIT License

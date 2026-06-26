@@ -4,3 +4,18 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+html {
+    background: var(--chakra-colors-bg-subtle);
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}

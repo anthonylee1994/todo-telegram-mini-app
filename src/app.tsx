@@ -4,7 +4,7 @@ import {type Task} from "./api/tasks";
 import {type TaskFormState} from "./utils/taskUtil";
 import {useTaskStore} from "./stores/useTaskStore";
 import {Header} from "./components/Header";
-import {TaskForm} from "./components/TaskForm";
+import {TaskDrawer} from "./components/TaskDrawer";
 import {TaskFilter as TaskFilterComponent} from "./components/TaskFilter";
 import {TaskCard} from "./components/TaskCard";
 import {LoadingState} from "./components/LoadingState";
@@ -15,6 +15,7 @@ import {useTaskLoading} from "./hooks/useTaskLoading";
 import {getDefaultDueDate} from "./utils/taskUtil";
 
 export const App = React.memo(() => {
+    const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
     const [form, setForm] = React.useState<TaskFormState>({
         title: "",
         description: "",
@@ -65,17 +66,7 @@ export const App = React.memo(() => {
         <Box minH="100vh" bg="bg.subtle" color="fg.default">
             <Container maxW="lg" px="4" py={{base: "5", md: "8"}}>
                 <Stack gap="5">
-                    <Header isLoading={isLoading} onRefresh={handleRefresh} />
-
-                    <TaskForm
-                        form={form}
-                        isSaving={isSaving}
-                        onTitleChange={handleTitleChange}
-                        onDescriptionChange={handleDescriptionChange}
-                        onDueDateChange={handleDueDateChange}
-                        onSubmit={handleTaskSubmit}
-                        onClearForm={handleClearForm}
-                    />
+                    <Header isLoading={isLoading} onRefresh={handleRefresh} onOpenDrawer={() => setIsDrawerOpen(true)} />
 
                     <TaskFilterComponent value={filter} onChange={setFilter} />
 
@@ -94,6 +85,18 @@ export const App = React.memo(() => {
                     ) : null}
                 </Stack>
             </Container>
+
+            <TaskDrawer
+                isOpen={isDrawerOpen}
+                onClose={() => setIsDrawerOpen(false)}
+                form={form}
+                isSaving={isSaving}
+                onTitleChange={handleTitleChange}
+                onDescriptionChange={handleDescriptionChange}
+                onDueDateChange={handleDueDateChange}
+                onSubmit={handleTaskSubmit}
+                onClearForm={handleClearForm}
+            />
         </Box>
     );
 });

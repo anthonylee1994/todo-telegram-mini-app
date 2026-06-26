@@ -49,7 +49,7 @@ export const TaskForm = React.memo(({form, isSaving, onTitleChange, onDescriptio
                 <Stack gap="4">
                     <Field.Root required>
                         <Field.Label>標題</Field.Label>
-                        <Input value={form.title} onChange={event => onTitleChange(event.target.value)} placeholder="例如：買牛奶" />
+                        <Input value={form.title} onChange={event => onTitleChange(event.target.value)} />
                     </Field.Root>
                     <Field.Root>
                         <Field.Label>備註</Field.Label>

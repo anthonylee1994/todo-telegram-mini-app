@@ -1,7 +1,8 @@
 import React from "react";
 import {Button, Drawer, Field, Input, Portal, Stack, Textarea} from "@chakra-ui/react";
 import {FiCheck, FiPlus} from "react-icons/fi";
-import {getTaskInput, type TaskFormState} from "../utils/taskUtil";
+import {type TaskInput} from "../api/tasks";
+import {getCreateTaskInput, getUpdateTaskInput, type TaskFormState} from "../utils/taskUtil";
 import {toaster} from "./ui/toaster";
 
 type TaskDrawerMode = "create" | "edit";
@@ -15,7 +16,7 @@ interface TaskDrawerProps {
     onTitleChange: (value: string) => void;
     onDescriptionChange: (value: string) => void;
     onDueDateChange: (value: string) => void;
-    onSubmit: (taskInput: ReturnType<typeof getTaskInput>) => Promise<void>;
+    onSubmit: (taskInput: TaskInput) => Promise<void>;
     onClearForm: () => void;
 }
 
@@ -36,7 +37,7 @@ export const TaskDrawer = React.memo(({isOpen, mode, onClose, form, isSaving, on
         }
 
         try {
-            await onSubmit(getTaskInput(form));
+            await onSubmit(isEditMode ? getUpdateTaskInput(form) : getCreateTaskInput(form));
             onClearForm();
             onClose();
             toaster.create({

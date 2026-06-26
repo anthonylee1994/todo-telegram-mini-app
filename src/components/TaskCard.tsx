@@ -11,6 +11,18 @@ interface TaskCardProps {
     onEdit: (task: Task) => void;
 }
 
+async function confirmDelete() {
+    const showConfirm = window.Telegram?.WebApp?.showConfirm;
+
+    if (!showConfirm) {
+        return window.confirm("確定要刪除呢個任務？");
+    }
+
+    return new Promise<boolean>(resolve => {
+        showConfirm("確定要刪除呢個任務？", resolve);
+    });
+}
+
 export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
     const toggleTask = useTaskStore(state => state.toggleTask);
     const removeTask = useTaskStore(state => state.removeTask);
@@ -30,6 +42,12 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
     };
 
     const handleDelete = async () => {
+        const confirmed = await confirmDelete();
+
+        if (!confirmed) {
+            return;
+        }
+
         try {
             await removeTask(task.id);
             toaster.create({

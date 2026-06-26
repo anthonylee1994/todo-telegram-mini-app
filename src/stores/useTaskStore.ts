@@ -41,6 +41,10 @@ function getErrorMessage(error: unknown) {
     return "操作失敗，請再試一次";
 }
 
+async function fetchFilteredTasks(filter: TaskFilter) {
+    return sortTasks(await fetchTasks(filter));
+}
+
 export const useTaskStore = create<TaskStore>((set, get) => {
     return {
         tasks: [],
@@ -55,8 +59,8 @@ export const useTaskStore = create<TaskStore>((set, get) => {
             set({isLoading: true, error: null});
 
             try {
-                const tasks = await fetchTasks(get().filter);
-                set({tasks: sortTasks(tasks), isLoading: false});
+                const tasks = await fetchFilteredTasks(get().filter);
+                set({tasks, isLoading: false});
             } catch (error) {
                 set({error: getErrorMessage(error), isLoading: false});
             }
@@ -65,13 +69,11 @@ export const useTaskStore = create<TaskStore>((set, get) => {
             set({isSaving: true, error: null});
 
             try {
-                const task = await createTask(input);
-                set(state => ({
-                    tasks: sortTasks([task, ...state.tasks]),
-                    isSaving: false,
-                }));
+                await createTask(input);
+                const tasks = await fetchFilteredTasks(get().filter);
+                set({tasks, isSaving: false});
             } catch (error) {
-                set({error: getErrorMessage(error), isSaving: false});
+                set({isSaving: false});
                 throw error;
             }
         },
@@ -79,39 +81,25 @@ export const useTaskStore = create<TaskStore>((set, get) => {
             set({isSaving: true, error: null});
 
             try {
-                const updatedTask = await updateTask(id, input);
-                set(state => ({
-                    tasks: sortTasks(state.tasks.map(currentTask => (currentTask.id === id ? updatedTask : currentTask))),
-                    isSaving: false,
-                }));
+                await updateTask(id, input);
+                const tasks = await fetchFilteredTasks(get().filter);
+                set({tasks, isSaving: false});
             } catch (error) {
-                set({error: getErrorMessage(error), isSaving: false});
+                set({isSaving: false});
                 throw error;
             }
         },
         toggleTask: async task => {
             const nextStatus = task.status === "completed" ? "pending" : "completed";
 
-            try {
-                const updatedTask = await updateTask(task.id, {status: nextStatus});
-                set(state => ({
-                    tasks: sortTasks(state.tasks.map(currentTask => (currentTask.id === task.id ? updatedTask : currentTask))),
-                }));
-            } catch (error) {
-                set({error: getErrorMessage(error)});
-                throw error;
-            }
+            await updateTask(task.id, {status: nextStatus});
+            const tasks = await fetchFilteredTasks(get().filter);
+            set({tasks, error: null});
         },
         removeTask: async id => {
-            try {
-                await deleteTask(id);
-                set(state => ({
-                    tasks: state.tasks.filter(task => task.id !== id),
-                }));
-            } catch (error) {
-                set({error: getErrorMessage(error)});
-                throw error;
-            }
+            await deleteTask(id);
+            const tasks = await fetchFilteredTasks(get().filter);
+            set({tasks, error: null});
         },
     };
 });

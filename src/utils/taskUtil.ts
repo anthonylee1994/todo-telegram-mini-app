@@ -56,13 +56,23 @@ export function buildDueDate(form: TaskFormState) {
     return date;
 }
 
-export function getTaskInput(form: TaskFormState) {
+function getTaskFields(form: TaskFormState) {
     const dueDate = buildDueDate(form);
 
     return {
         title: form.title.trim(),
         description: form.description.trim() || null,
         due_date: dueDate ? dueDate.toISOString() : null,
+    };
+}
+
+export function getCreateTaskInput(form: TaskFormState) {
+    return {
+        ...getTaskFields(form),
         status: "pending" as const,
     };
+}
+
+export function getUpdateTaskInput(form: TaskFormState) {
+    return getTaskFields(form);
 }

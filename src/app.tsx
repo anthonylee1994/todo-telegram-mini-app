@@ -46,12 +46,7 @@ export const App = React.memo(() => {
 
     const handleTaskSubmit = async (taskInput: TaskInput) => {
         if (editingTask) {
-            const taskUpdate = {
-                title: taskInput.title,
-                description: taskInput.description,
-                due_date: taskInput.due_date,
-            };
-            await editTask(editingTask.id, taskUpdate);
+            await editTask(editingTask.id, taskInput);
             return;
         }
 

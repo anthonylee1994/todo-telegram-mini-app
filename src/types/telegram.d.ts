@@ -13,6 +13,7 @@ declare global {
                 };
                 ready?: () => void;
                 expand?: () => void;
+                showConfirm?: (message: string, callback: (confirmed: boolean) => void) => void;
                 onEvent?: (eventType: "contentSafeAreaChanged" | "safeAreaChanged" | "viewportChanged", eventHandler: () => void) => void;
                 offEvent?: (eventType: "contentSafeAreaChanged" | "safeAreaChanged" | "viewportChanged", eventHandler: () => void) => void;
             };

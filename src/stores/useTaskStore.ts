@@ -16,7 +16,7 @@ type TaskStore = {
 };
 
 function sortTasks(tasks: Task[]) {
-    return [...tasks].sort(function compareTasks(firstTask, secondTask) {
+    return [...tasks].sort((firstTask, secondTask) => {
         if (!firstTask.due_date && !secondTask.due_date) {
             return firstTask.created_at.localeCompare(secondTask.created_at);
         }
@@ -41,17 +41,17 @@ function getErrorMessage(error: unknown) {
     return "操作失敗，請再試一次";
 }
 
-export const useTaskStore = create<TaskStore>()(function createTaskStore(set, get) {
+export const useTaskStore = create<TaskStore>((set, get) => {
     return {
         tasks: [],
         filter: "all",
         isLoading: false,
         isSaving: false,
         error: null,
-        setFilter: function setFilter(filter) {
+        setFilter: filter => {
             set({filter});
         },
-        loadTasks: async function loadTasks() {
+        loadTasks: async () => {
             set({isLoading: true, error: null});
 
             try {
@@ -61,71 +61,53 @@ export const useTaskStore = create<TaskStore>()(function createTaskStore(set, ge
                 set({error: getErrorMessage(error), isLoading: false});
             }
         },
-        addTask: async function addTask(input) {
+        addTask: async input => {
             set({isSaving: true, error: null});
 
             try {
                 const task = await createTask(input);
-                set(function updateTasks(state) {
-                    return {
-                        tasks: sortTasks([task, ...state.tasks]),
-                        isSaving: false,
-                    };
-                });
+                set(state => ({
+                    tasks: sortTasks([task, ...state.tasks]),
+                    isSaving: false,
+                }));
             } catch (error) {
                 set({error: getErrorMessage(error), isSaving: false});
                 throw error;
             }
         },
-        editTask: async function editTask(id, input) {
+        editTask: async (id, input) => {
             set({isSaving: true, error: null});
 
             try {
                 const updatedTask = await updateTask(id, input);
-                set(function updateTasks(state) {
-                    return {
-                        tasks: sortTasks(
-                            state.tasks.map(function replaceTask(currentTask) {
-                                return currentTask.id === id ? updatedTask : currentTask;
-                            })
-                        ),
-                        isSaving: false,
-                    };
-                });
+                set(state => ({
+                    tasks: sortTasks(state.tasks.map(currentTask => (currentTask.id === id ? updatedTask : currentTask))),
+                    isSaving: false,
+                }));
             } catch (error) {
                 set({error: getErrorMessage(error), isSaving: false});
                 throw error;
             }
         },
-        toggleTask: async function toggleTask(task) {
+        toggleTask: async task => {
             const nextStatus = task.status === "completed" ? "pending" : "completed";
 
             try {
                 const updatedTask = await updateTask(task.id, {status: nextStatus});
-                set(function updateTasks(state) {
-                    return {
-                        tasks: sortTasks(
-                            state.tasks.map(function replaceTask(currentTask) {
-                                return currentTask.id === task.id ? updatedTask : currentTask;
-                            })
-                        ),
-                    };
-                });
+                set(state => ({
+                    tasks: sortTasks(state.tasks.map(currentTask => (currentTask.id === task.id ? updatedTask : currentTask))),
+                }));
             } catch (error) {
                 set({error: getErrorMessage(error)});
                 throw error;
             }
         },
-        removeTask: async function removeTask(id) {
+        removeTask: async id => {
             try {
                 await deleteTask(id);
-                set(function updateTasks(state) {
-                    return {
-                        tasks: state.tasks.filter(function keepTask(task) {
-                            return task.id !== id;
-                        }),
-                    };
-                });
+                set(state => ({
+                    tasks: state.tasks.filter(task => task.id !== id),
+                }));
             } catch (error) {
                 set({error: getErrorMessage(error)});
                 throw error;

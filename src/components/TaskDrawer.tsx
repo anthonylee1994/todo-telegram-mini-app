@@ -65,7 +65,7 @@ export const TaskDrawer = React.memo(({isOpen, onClose, form, isSaving, onTitleC
                             <Drawer.Title>新增任務</Drawer.Title>
                             <Drawer.CloseTrigger />
                         </Drawer.Header>
-                        <Drawer.Body pb="calc(var(--chakra-spacing-6) + env(safe-area-inset-bottom))">
+                        <Drawer.Body pb="calc(var(--chakra-spacing-6) + max(env(safe-area-inset-bottom), var(--app-safe-area-inset-bottom, 0px)))">
                             <form onSubmit={handleSubmit}>
                                 <Stack gap="4">
                                     <Field.Root required>

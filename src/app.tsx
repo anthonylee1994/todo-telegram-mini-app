@@ -12,11 +12,7 @@ import {EmptyState} from "./components/EmptyState";
 import {ErrorDisplay} from "./components/ErrorDisplay";
 import {useTelegram} from "./hooks/useTelegram";
 import {useTaskLoading} from "./hooks/useTaskLoading";
-
-function getDefaultDueDate() {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-}
+import {getDefaultDueDate} from "./utils/taskUtil";
 
 export const App = React.memo(() => {
     const [form, setForm] = React.useState<TaskFormState>({

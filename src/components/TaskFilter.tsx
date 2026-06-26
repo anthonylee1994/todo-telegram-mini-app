@@ -1,32 +1,37 @@
 import React from "react";
-import {SegmentGroup} from "@chakra-ui/react";
-import {type TaskFilter} from "../api/tasks";
+import {Tabs} from "@chakra-ui/react";
+import {type TaskFilter as TaskFilterType} from "../api/tasks";
 
-const filterOptions: Array<{label: string; value: TaskFilter}> = [
+const filterOptions: Array<{label: string; value: TaskFilterType}> = [
     {label: "全部", value: "all"},
     {label: "今日", value: "today"},
     {label: "今週", value: "this_week"},
     {label: "過期", value: "overdue"},
 ];
 
-interface TaskFilterProps {
-    value: TaskFilter;
-    onChange: (value: TaskFilter) => void;
+interface TabsProps {
+    value: TaskFilterType;
+    onChange: (value: TaskFilterType) => void;
 }
 
-export const TaskFilter = React.memo(({value, onChange}: TaskFilterProps) => {
-    const handleFilterChange = (details: {value: string | null}) => {
-        const nextFilter = details.value as TaskFilter | null;
-
-        if (nextFilter) {
-            onChange(nextFilter);
-        }
-    };
-
+export const TaskFilter = React.memo(({value, onChange}: TabsProps) => {
     return (
-        <SegmentGroup.Root value={value} onValueChange={handleFilterChange} width="100%">
-            <SegmentGroup.Indicator />
-            <SegmentGroup.Items items={filterOptions} />
-        </SegmentGroup.Root>
+        <Tabs.Root
+            value={value}
+            onValueChange={details => {
+                const nextFilter = details.value as TaskFilterType | null;
+                if (nextFilter) {
+                    onChange(nextFilter);
+                }
+            }}
+        >
+            <Tabs.List>
+                {filterOptions.map(option => (
+                    <Tabs.Trigger key={option.value} value={option.value}>
+                        {option.label}
+                    </Tabs.Trigger>
+                ))}
+            </Tabs.List>
+        </Tabs.Root>
     );
 });

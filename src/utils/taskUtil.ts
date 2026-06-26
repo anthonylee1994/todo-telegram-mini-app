@@ -1,3 +1,4 @@
+import moment from "moment";
 import {type Task} from "../api/tasks";
 
 export type TaskFormState = {
@@ -5,6 +6,10 @@ export type TaskFormState = {
     description: string;
     dueDate: string;
 };
+
+export function getDefaultDueDate() {
+    return moment().format("YYYY-MM-DDTHH:mm");
+}
 
 export function formatDueDate(dueDate: string | null) {
     if (!dueDate) {
@@ -27,69 +32,6 @@ export function getDueDateBadgeColor(task: Task) {
     }
 
     return new Date(task.due_date).getTime() < Date.now() ? "red" : "blue";
-}
-
-export function parseDateInput(dateInput: string) {
-    const value = dateInput.trim();
-    const isoDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-    const slashDateMatch = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value);
-
-    if (isoDateMatch) {
-        return {
-            year: Number(isoDateMatch[1]),
-            month: Number(isoDateMatch[2]),
-            day: Number(isoDateMatch[3]),
-        };
-    }
-
-    if (slashDateMatch) {
-        return {
-            year: Number(slashDateMatch[3]),
-            month: Number(slashDateMatch[1]),
-            day: Number(slashDateMatch[2]),
-        };
-    }
-
-    return null;
-}
-
-export function parseTimeInput(timeInput: string) {
-    const value = timeInput.trim();
-    const emptyTime = {
-        hour: 23,
-        minute: 59,
-    };
-
-    if (!value) {
-        return emptyTime;
-    }
-
-    const timeMatch = /^(\d{1,2}):(\d{2})(?:\s*([AP]M))?$/i.exec(value);
-
-    if (!timeMatch) {
-        return null;
-    }
-
-    const meridiem = timeMatch[3]?.toUpperCase();
-    let hour = Number(timeMatch[1]);
-    const minute = Number(timeMatch[2]);
-
-    if (meridiem === "PM" && hour < 12) {
-        hour += 12;
-    }
-
-    if (meridiem === "AM" && hour === 12) {
-        hour = 0;
-    }
-
-    if (hour > 23 || minute > 59) {
-        return null;
-    }
-
-    return {
-        hour,
-        minute,
-    };
 }
 
 export function buildDueDate(form: TaskFormState) {

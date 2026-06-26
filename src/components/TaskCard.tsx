@@ -1,6 +1,6 @@
 import React from "react";
 import {Badge, Box, Checkbox, Flex, HStack, IconButton, Heading, Stack, Text} from "@chakra-ui/react";
-import {FiTrash2} from "react-icons/fi";
+import {FiEdit2, FiTrash2} from "react-icons/fi";
 import {type Task} from "../api/tasks";
 import {useTaskStore} from "../stores/useTaskStore";
 import {formatDueDate, getDueDateBadgeColor} from "../utils/taskUtil";
@@ -8,9 +8,10 @@ import {toaster} from "./ui/toaster";
 
 interface TaskCardProps {
     task: Task;
+    onEdit: (task: Task) => void;
 }
 
-export const TaskCard = React.memo(({task}: TaskCardProps) => {
+export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
     const toggleTask = useTaskStore(state => state.toggleTask);
     const removeTask = useTaskStore(state => state.removeTask);
 
@@ -51,29 +52,34 @@ export const TaskCard = React.memo(({task}: TaskCardProps) => {
                     <Checkbox.HiddenInput />
                     <Checkbox.Control />
                 </Checkbox.Root>
-                <Stack gap="2" flex="1" minW="0">
-                    <HStack justify="space-between" align="flex-start" gap="3">
+                <Flex flex="1" minW="0" align="flex-start" justify="space-between" gap="3">
+                    <Stack gap="2" flex="1" minW="0">
                         <Heading as="h3" size="sm" color={isCompleted ? "fg.muted" : "fg.default"} textDecoration={isCompleted ? "line-through" : "none"} wordBreak="break-word">
                             {task.title}
                         </Heading>
-                        <IconButton aria-label="刪除任務" variant="ghost" colorPalette="red" size="sm" onClick={handleDelete} flexShrink="0">
+                        {task.description ? (
+                            <Text color="fg.muted" fontSize="sm" whiteSpace="pre-wrap">
+                                {task.description}
+                            </Text>
+                        ) : null}
+                        <HStack gap="2" wrap="wrap">
+                            <Badge colorPalette={getDueDateBadgeColor(task)} variant="subtle">
+                                {formatDueDate(task.due_date)}
+                            </Badge>
+                            <Badge colorPalette={isCompleted ? "green" : "orange"} variant="subtle">
+                                {isCompleted ? "已完成" : "未完成"}
+                            </Badge>
+                        </HStack>
+                    </Stack>
+                    <HStack gap="1" flexShrink="0">
+                        <IconButton aria-label="編輯任務" variant="ghost" size="sm" onClick={() => onEdit(task)}>
+                            <FiEdit2 />
+                        </IconButton>
+                        <IconButton aria-label="刪除任務" variant="ghost" colorPalette="red" size="sm" onClick={handleDelete}>
                             <FiTrash2 />
                         </IconButton>
                     </HStack>
-                    {task.description ? (
-                        <Text color="fg.muted" fontSize="sm" whiteSpace="pre-wrap">
-                            {task.description}
-                        </Text>
-                    ) : null}
-                    <HStack gap="2" wrap="wrap">
-                        <Badge colorPalette={getDueDateBadgeColor(task)} variant="subtle">
-                            {formatDueDate(task.due_date)}
-                        </Badge>
-                        <Badge colorPalette={isCompleted ? "green" : "orange"} variant="subtle">
-                            {isCompleted ? "已完成" : "未完成"}
-                        </Badge>
-                    </HStack>
-                </Stack>
+                </Flex>
             </Flex>
         </Box>
     );

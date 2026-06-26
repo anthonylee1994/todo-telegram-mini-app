@@ -1,6 +1,6 @@
 import React from "react";
 import {Box, Container, Stack} from "@chakra-ui/react";
-import {type Task} from "./api/tasks";
+import {type Task, type TaskInput} from "./api/tasks";
 import {type TaskFormState} from "./utils/taskUtil";
 import {useTaskStore} from "./stores/useTaskStore";
 import {Header} from "./components/Header";
@@ -12,10 +12,11 @@ import {EmptyState} from "./components/EmptyState";
 import {ErrorDisplay} from "./components/ErrorDisplay";
 import {useTelegram} from "./hooks/useTelegram";
 import {useTaskLoading} from "./hooks/useTaskLoading";
-import {getDefaultDueDate} from "./utils/taskUtil";
+import {getDefaultDueDate, getTaskFormState} from "./utils/taskUtil";
 
 export const App = React.memo(() => {
     const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+    const [editingTask, setEditingTask] = React.useState<Task | null>(null);
     const [form, setForm] = React.useState<TaskFormState>({
         title: "",
         description: "",
@@ -30,13 +31,7 @@ export const App = React.memo(() => {
     const setFilter = useTaskStore(state => state.setFilter);
     const loadTasks = useTaskStore(state => state.loadTasks);
     const addTask = useTaskStore(state => state.addTask);
-
-    useTelegram();
-    useTaskLoading(filter);
-
-    const handleTaskSubmit = async (taskInput: ReturnType<typeof import("./utils/taskUtil").getTaskInput>) => {
-        await addTask(taskInput);
-    };
+    const editTask = useTaskStore(state => state.editTask);
 
     const handleClearForm = () => {
         setForm({
@@ -44,6 +39,41 @@ export const App = React.memo(() => {
             description: "",
             dueDate: getDefaultDueDate(),
         });
+    };
+
+    useTelegram();
+    useTaskLoading(filter);
+
+    const handleTaskSubmit = async (taskInput: TaskInput) => {
+        if (editingTask) {
+            const taskUpdate = {
+                title: taskInput.title,
+                description: taskInput.description,
+                due_date: taskInput.due_date,
+            };
+            await editTask(editingTask.id, taskUpdate);
+            return;
+        }
+
+        await addTask(taskInput);
+    };
+
+    const handleOpenCreateDrawer = () => {
+        setEditingTask(null);
+        handleClearForm();
+        setIsDrawerOpen(true);
+    };
+
+    const handleOpenEditDrawer = (task: Task) => {
+        setEditingTask(task);
+        setForm(getTaskFormState(task));
+        setIsDrawerOpen(true);
+    };
+
+    const handleCloseDrawer = () => {
+        setIsDrawerOpen(false);
+        setEditingTask(null);
+        handleClearForm();
     };
 
     const handleTitleChange = (value: string) => {
@@ -66,7 +96,7 @@ export const App = React.memo(() => {
         <Box minH="100vh" bg="bg.subtle" color="fg.default">
             <Container maxW="lg" px="4" py={{base: "5", md: "8"}}>
                 <Stack gap="5">
-                    <Header isLoading={isLoading} onRefresh={handleRefresh} onOpenDrawer={() => setIsDrawerOpen(true)} />
+                    <Header isLoading={isLoading} onRefresh={handleRefresh} onOpenDrawer={handleOpenCreateDrawer} />
 
                     <TaskFilterComponent value={filter} onChange={setFilter} />
 
@@ -79,7 +109,7 @@ export const App = React.memo(() => {
                     {!isLoading && tasks.length > 0 ? (
                         <Stack gap="3">
                             {tasks.map((task: Task) => (
-                                <TaskCard key={task.id} task={task} />
+                                <TaskCard key={task.id} task={task} onEdit={handleOpenEditDrawer} />
                             ))}
                         </Stack>
                     ) : null}
@@ -88,7 +118,8 @@ export const App = React.memo(() => {
 
             <TaskDrawer
                 isOpen={isDrawerOpen}
-                onClose={() => setIsDrawerOpen(false)}
+                mode={editingTask ? "edit" : "create"}
+                onClose={handleCloseDrawer}
                 form={form}
                 isSaving={isSaving}
                 onTitleChange={handleTitleChange}

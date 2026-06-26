@@ -10,6 +10,7 @@ type TaskStore = {
     setFilter: (filter: TaskFilter) => void;
     loadTasks: () => Promise<void>;
     addTask: (input: TaskInput) => Promise<void>;
+    editTask: (id: string, input: Partial<TaskInput>) => Promise<void>;
     toggleTask: (task: Task) => Promise<void>;
     removeTask: (id: string) => Promise<void>;
 };
@@ -68,6 +69,26 @@ export const useTaskStore = create<TaskStore>()(function createTaskStore(set, ge
                 set(function updateTasks(state) {
                     return {
                         tasks: sortTasks([task, ...state.tasks]),
+                        isSaving: false,
+                    };
+                });
+            } catch (error) {
+                set({error: getErrorMessage(error), isSaving: false});
+                throw error;
+            }
+        },
+        editTask: async function editTask(id, input) {
+            set({isSaving: true, error: null});
+
+            try {
+                const updatedTask = await updateTask(id, input);
+                set(function updateTasks(state) {
+                    return {
+                        tasks: sortTasks(
+                            state.tasks.map(function replaceTask(currentTask) {
+                                return currentTask.id === id ? updatedTask : currentTask;
+                            })
+                        ),
                         isSaving: false,
                     };
                 });

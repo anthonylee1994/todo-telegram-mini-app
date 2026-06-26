@@ -1,22 +1,29 @@
 import React from "react";
 import {Button, Drawer, Field, Input, Portal, Stack, Textarea} from "@chakra-ui/react";
-import {FiPlus} from "react-icons/fi";
-import {type TaskFormState} from "../utils/taskUtil";
+import {FiCheck, FiPlus} from "react-icons/fi";
+import {getTaskInput, type TaskFormState} from "../utils/taskUtil";
 import {toaster} from "./ui/toaster";
+
+type TaskDrawerMode = "create" | "edit";
 
 interface TaskDrawerProps {
     isOpen: boolean;
+    mode: TaskDrawerMode;
     onClose: () => void;
     form: TaskFormState;
     isSaving: boolean;
     onTitleChange: (value: string) => void;
     onDescriptionChange: (value: string) => void;
     onDueDateChange: (value: string) => void;
-    onSubmit: (taskInput: ReturnType<typeof import("../utils/taskUtil").getTaskInput>) => Promise<void>;
+    onSubmit: (taskInput: ReturnType<typeof getTaskInput>) => Promise<void>;
     onClearForm: () => void;
 }
 
-export const TaskDrawer = React.memo(({isOpen, onClose, form, isSaving, onTitleChange, onDescriptionChange, onDueDateChange, onSubmit, onClearForm}: TaskDrawerProps) => {
+export const TaskDrawer = React.memo(({isOpen, mode, onClose, form, isSaving, onTitleChange, onDescriptionChange, onDueDateChange, onSubmit, onClearForm}: TaskDrawerProps) => {
+    const isEditMode = mode === "edit";
+    const title = isEditMode ? "編輯任務" : "新增任務";
+    const submitLabel = isEditMode ? "儲存任務" : "新增任務";
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -29,17 +36,16 @@ export const TaskDrawer = React.memo(({isOpen, onClose, form, isSaving, onTitleC
         }
 
         try {
-            const {getTaskInput} = await import("../utils/taskUtil");
             await onSubmit(getTaskInput(form));
             onClearForm();
             onClose();
             toaster.create({
-                title: "已新增任務",
+                title: isEditMode ? "已更新任務" : "已新增任務",
                 type: "success",
             });
         } catch (submitError) {
             toaster.create({
-                title: "新增唔到",
+                title: isEditMode ? "更新唔到" : "新增唔到",
                 description: submitError instanceof Error ? submitError.message : "請再試一次",
                 type: "error",
             });
@@ -62,7 +68,7 @@ export const TaskDrawer = React.memo(({isOpen, onClose, form, isSaving, onTitleC
                 <Drawer.Positioner>
                     <Drawer.Content borderTopRadius="2xl" h="auto" maxH="calc(100dvh - 3rem)">
                         <Drawer.Header>
-                            <Drawer.Title>新增任務</Drawer.Title>
+                            <Drawer.Title>{title}</Drawer.Title>
                             <Drawer.CloseTrigger />
                         </Drawer.Header>
                         <Drawer.Body pb="calc(var(--chakra-spacing-6) + max(env(safe-area-inset-bottom), var(--app-safe-area-inset-bottom, 0px)))">
@@ -82,8 +88,8 @@ export const TaskDrawer = React.memo(({isOpen, onClose, form, isSaving, onTitleC
                                         <Field.HelperText>選擇日期同時間，預設當前時間。</Field.HelperText>
                                     </Field.Root>
                                     <Button type="submit" colorPalette="blue" loading={isSaving} width="100%">
-                                        <FiPlus />
-                                        新增任務
+                                        {isEditMode ? <FiCheck /> : <FiPlus />}
+                                        {submitLabel}
                                     </Button>
                                 </Stack>
                             </form>

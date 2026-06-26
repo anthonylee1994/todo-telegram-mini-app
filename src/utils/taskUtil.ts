@@ -11,6 +11,14 @@ export function getDefaultDueDate() {
     return moment().format("YYYY-MM-DDTHH:mm");
 }
 
+export function getTaskFormState(task: Task): TaskFormState {
+    return {
+        title: task.title,
+        description: task.description || "",
+        dueDate: task.due_date ? moment(task.due_date).format("YYYY-MM-DDTHH:mm") : "",
+    };
+}
+
 export function formatDueDate(dueDate: string | null) {
     if (!dueDate) {
         return "冇限期";

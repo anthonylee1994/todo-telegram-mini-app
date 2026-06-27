@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Container, Fab, Stack} from "@mui/material";
+import {Box, Container, Fab, List} from "@mui/material";
 import {type Task, type TaskInput} from "./api/tasks";
 import {type TaskFormState} from "./utils/taskUtil";
 import {useTaskStore} from "./stores/useTaskStore";
@@ -105,11 +105,11 @@ export const App = React.memo(() => {
                 {!isLoading && tasks.length === 0 ? <EmptyState /> : null}
 
                 {!isLoading && tasks.length > 0 ? (
-                    <Stack spacing={0} sx={{pb: 15}}>
+                    <List disablePadding sx={{pb: 15}}>
                         {tasks.map((task: Task) => (
                             <TaskCard key={task.id} task={task} onEdit={handleOpenEditDrawer} />
                         ))}
-                    </Stack>
+                    </List>
                 ) : null}
             </Container>
 

@@ -1,6 +1,5 @@
 import React from "react";
-import {Checkbox as MuiCheckbox, Box, Stack, Typography, Chip, IconButton, type ChipProps} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import {Checkbox as MuiCheckbox, Stack, Typography, Chip, IconButton, ListItem, ListItemIcon, ListItemText, type ChipProps, ListItemButton} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {type Task} from "../api/tasks";
 import {useTaskStore} from "../stores/useTaskStore";
@@ -42,6 +41,14 @@ function getMuiDueDateColor(task: Task): ChipProps["color"] {
     return "default";
 }
 
+function getPopupMessage(error: unknown) {
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return "操作失敗，請再試一次";
+}
+
 export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
     const toggleTask = useTaskStore(state => state.toggleTask);
     const removeTask = useTaskStore(state => state.removeTask);
@@ -49,15 +56,19 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
 
     const isCompleted = task.status === "completed";
 
-    const handleToggle = async () => {
+    const handleToggle = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+
         try {
             await toggleTask(task);
         } catch (error) {
-            showPopup({title: "更新唔到", message: error});
+            showPopup({title: "更新唔到", message: getPopupMessage(error)});
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+
         const confirmed = await confirmDelete();
 
         if (!confirmed) {
@@ -67,27 +78,35 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
         try {
             await removeTask(task.id);
         } catch (error) {
-            showPopup({title: "刪除唔到", message: error});
+            showPopup({title: "刪除唔到", message: getPopupMessage(error)});
         }
     };
 
     const dueDateColor = getMuiDueDateColor(task);
+    const labelId = `task-${task.id}-label`;
 
     return (
-        <Box component="article" sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
-            <Box sx={{display: "flex", alignItems: "flex-start", gap: 1.5}}>
-                <MuiCheckbox checked={isCompleted} onChange={handleToggle} sx={{mt: 0.5}} />
-                <Box
-                    sx={{
-                        flex: 1,
-                        minWidth: 0,
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                        gap: 1.5,
-                    }}
-                >
-                    <Stack spacing={2} sx={{flex: 1, minWidth: 0}}>
+        <ListItem
+            onClick={() => onEdit(task)}
+            secondaryAction={
+                <Stack direction="row" spacing={0.25}>
+                    <IconButton aria-label="刪除任務" edge="end" onClick={handleDelete} size="small">
+                        <DeleteIcon />
+                    </IconButton>
+                </Stack>
+            }
+            divider
+            disablePadding
+        >
+            <ListItemIcon sx={{position: "absolute", left: 15}}>
+                <MuiCheckbox edge="start" checked={isCompleted} slotProps={{input: {"aria-labelledby": labelId}}} onClick={handleToggle} />
+            </ListItemIcon>
+            <ListItemButton dense sx={{p: 2, pl: 6}}>
+                <ListItemText
+                    id={labelId}
+                    disableTypography
+                    sx={{m: 0, minWidth: 0}}
+                    primary={
                         <Typography
                             variant="subtitle1"
                             sx={{
@@ -99,26 +118,22 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
                         >
                             {task.title}
                         </Typography>
-                        {task.description ? (
-                            <Typography variant="body2" color="text.secondary" sx={{whiteSpace: "pre-wrap"}}>
-                                {task.description}
-                            </Typography>
-                        ) : null}
-                        <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: "wrap"}}>
-                            <Chip label={formatDueDate(task.due_date)} color={dueDateColor} size="small" variant="outlined" />
-                            <Chip label={isCompleted ? "已完成" : "未完成"} color={isCompleted ? "success" : "warning"} size="small" variant="outlined" />
+                    }
+                    secondary={
+                        <Stack spacing={2} sx={{mt: task.description ? 2 : 1.5}}>
+                            {task.description ? (
+                                <Typography variant="body2" color="text.secondary" sx={{whiteSpace: "pre-wrap"}}>
+                                    {task.description}
+                                </Typography>
+                            ) : null}
+                            <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: "wrap"}}>
+                                <Chip label={formatDueDate(task.due_date)} color={dueDateColor} size="small" variant="outlined" />
+                                <Chip label={isCompleted ? "已完成" : "未完成"} color={isCompleted ? "success" : "warning"} size="small" variant="outlined" />
+                            </Stack>
                         </Stack>
-                    </Stack>
-                    <Stack direction="row" spacing={0.25} sx={{flexShrink: 0}}>
-                        <IconButton aria-label="編輯任務" onClick={() => onEdit(task)} size="small">
-                            <EditIcon />
-                        </IconButton>
-                        <IconButton aria-label="刪除任務" color="error" onClick={handleDelete} size="small">
-                            <DeleteIcon />
-                        </IconButton>
-                    </Stack>
-                </Box>
-            </Box>
-        </Box>
+                    }
+                />
+            </ListItemButton>
+        </ListItem>
     );
 });

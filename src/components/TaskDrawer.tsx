@@ -60,8 +60,8 @@ export const TaskDrawer = React.memo(({isOpen, mode, onClose, form, isSaving, on
                             fullWidth
                         />
                         <TextField slotProps={{inputLabel: {shrink: true}}} fullWidth label="日期" type="datetime-local" value={form.dueDate} onChange={event => onDueDateChange(event.target.value)} />
-                        <MainButton text={submitLabel} onClick={handleSubmit} disabled={isSaving} />
-                        <BackButton onClick={onClose} />
+                        {isOpen ? <MainButton text={submitLabel} onClick={handleSubmit} disabled={isSaving} /> : null}
+                        {isOpen ? <BackButton onClick={onClose} /> : null}
                     </Stack>
                 </form>
             </Stack>

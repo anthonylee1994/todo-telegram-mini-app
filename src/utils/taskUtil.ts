@@ -8,7 +8,7 @@ export type TaskFormState = {
 };
 
 export function getDefaultDueDate() {
-    return moment().format("YYYY-MM-DDTHH:mm");
+    return moment().add(1, "day").format("YYYY-MM-DDTHH:mm");
 }
 
 export function getTaskFormState(task: Task): TaskFormState {

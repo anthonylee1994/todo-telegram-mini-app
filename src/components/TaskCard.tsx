@@ -1,10 +1,10 @@
 import React from "react";
-import {Badge, Box, Checkbox, Flex, HStack, IconButton, Heading, Stack, Text} from "@chakra-ui/react";
-import {FiEdit2, FiTrash2} from "react-icons/fi";
+import {Checkbox as MuiCheckbox, Box, Stack, Typography, Chip, IconButton, type ChipProps} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {type Task} from "../api/tasks";
 import {useTaskStore} from "../stores/useTaskStore";
 import {formatDueDate, getDueDateBadgeColor} from "../utils/taskUtil";
-import {toaster} from "./ui/toaster";
 
 interface TaskCardProps {
     task: Task;
@@ -23,6 +23,28 @@ async function confirmDelete() {
     });
 }
 
+function showError(title: string, error: unknown) {
+    window.alert(`${title}\n${error instanceof Error ? error.message : "請再試一次"}`);
+}
+
+function getMuiDueDateColor(task: Task): ChipProps["color"] {
+    const dueDateColor = getDueDateBadgeColor(task);
+
+    if (dueDateColor === "red") {
+        return "error";
+    }
+
+    if (dueDateColor === "green") {
+        return "success";
+    }
+
+    if (dueDateColor === "blue") {
+        return "info";
+    }
+
+    return "default";
+}
+
 export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
     const toggleTask = useTaskStore(state => state.toggleTask);
     const removeTask = useTaskStore(state => state.removeTask);
@@ -33,11 +55,7 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
         try {
             await toggleTask(task);
         } catch (error) {
-            toaster.create({
-                title: "更新唔到",
-                description: error instanceof Error ? error.message : "請再試一次",
-                type: "error",
-            });
+            showError("更新唔到", error);
         }
     };
 
@@ -50,55 +68,59 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
 
         try {
             await removeTask(task.id);
-            toaster.create({
-                title: "已刪除",
-                type: "success",
-            });
         } catch (error) {
-            toaster.create({
-                title: "刪除唔到",
-                description: error instanceof Error ? error.message : "請再試一次",
-                type: "error",
-            });
+            showError("刪除唔到", error);
         }
     };
 
+    const dueDateColor = getMuiDueDateColor(task);
+
     return (
-        <Box as="article" borderWidth="1px" borderColor="border.subtle" borderRadius="lg" bg="bg.panel" p="4" shadow="xs">
-            <Flex align="flex-start" gap="3">
-                <Checkbox.Root checked={isCompleted} onCheckedChange={handleToggle} mt="1">
-                    <Checkbox.HiddenInput />
-                    <Checkbox.Control />
-                </Checkbox.Root>
-                <Flex flex="1" minW="0" align="flex-start" justify="space-between" gap="3">
-                    <Stack gap="2" flex="1" minW="0">
-                        <Heading as="h3" size="sm" color={isCompleted ? "fg.muted" : "fg.default"} textDecoration={isCompleted ? "line-through" : "none"} wordBreak="break-word">
+        <Box component="article" sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
+            <Box sx={{display: "flex", alignItems: "flex-start", gap: 1.5}}>
+                <MuiCheckbox checked={isCompleted} onChange={handleToggle} sx={{mt: 0.5}} />
+                <Box
+                    sx={{
+                        flex: 1,
+                        minWidth: 0,
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        gap: 1.5,
+                    }}
+                >
+                    <Stack spacing={2} sx={{flex: 1, minWidth: 0}}>
+                        <Typography
+                            variant="subtitle1"
+                            sx={{
+                                color: isCompleted ? "text.disabled" : "text.primary",
+                                textDecoration: isCompleted ? "line-through" : "none",
+                                fontWeight: 700,
+                                wordBreak: "break-word",
+                            }}
+                        >
                             {task.title}
-                        </Heading>
+                        </Typography>
                         {task.description ? (
-                            <Text color="fg.muted" fontSize="sm" whiteSpace="pre-wrap">
+                            <Typography variant="body2" color="text.secondary" sx={{whiteSpace: "pre-wrap"}}>
                                 {task.description}
-                            </Text>
+                            </Typography>
                         ) : null}
-                        <HStack gap="2" wrap="wrap">
-                            <Badge colorPalette={getDueDateBadgeColor(task)} variant="subtle">
-                                {formatDueDate(task.due_date)}
-                            </Badge>
-                            <Badge colorPalette={isCompleted ? "green" : "orange"} variant="subtle">
-                                {isCompleted ? "已完成" : "未完成"}
-                            </Badge>
-                        </HStack>
+                        <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: "wrap"}}>
+                            <Chip label={formatDueDate(task.due_date)} color={dueDateColor} size="small" variant="outlined" />
+                            <Chip label={isCompleted ? "已完成" : "未完成"} color={isCompleted ? "success" : "warning"} size="small" variant="outlined" />
+                        </Stack>
                     </Stack>
-                    <HStack gap="1" flexShrink="0">
-                        <IconButton aria-label="編輯任務" variant="ghost" size="sm" onClick={() => onEdit(task)}>
-                            <FiEdit2 />
+                    <Stack direction="row" spacing={0.25} sx={{flexShrink: 0}}>
+                        <IconButton aria-label="編輯任務" onClick={() => onEdit(task)} size="small">
+                            <EditIcon />
                         </IconButton>
-                        <IconButton aria-label="刪除任務" variant="ghost" colorPalette="red" size="sm" onClick={handleDelete}>
-                            <FiTrash2 />
+                        <IconButton aria-label="刪除任務" color="error" onClick={handleDelete} size="small">
+                            <DeleteIcon />
                         </IconButton>
-                    </HStack>
-                </Flex>
-            </Flex>
+                    </Stack>
+                </Box>
+            </Box>
         </Box>
     );
 });

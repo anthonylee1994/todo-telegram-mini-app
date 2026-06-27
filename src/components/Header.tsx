@@ -1,29 +1,27 @@
 import React from "react";
-import {Flex, Heading, IconButton, Stack} from "@chakra-ui/react";
-import {FiPlus, FiRefreshCw} from "react-icons/fi";
+import {AppBar, CircularProgress, IconButton, Stack, Toolbar, Typography} from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 interface HeaderProps {
     isLoading: boolean;
     onRefresh: () => void;
-    onOpenDrawer: () => void;
+    children: React.ReactNode;
 }
 
-export const Header = React.memo(({isLoading, onRefresh, onOpenDrawer}: HeaderProps) => {
+export const Header = React.memo(({isLoading, onRefresh, children}: HeaderProps) => {
     return (
-        <Flex align="center" justify="space-between" gap="3">
-            <Stack gap="1">
-                <Heading as="h1" size="xl">
+        <AppBar position="sticky">
+            <Toolbar sx={{justifyContent: "space-between"}}>
+                <Typography variant="h6" component="div">
                     任務清單
-                </Heading>
-            </Stack>
-            <Stack direction="row" gap="2">
-                <IconButton aria-label="重新整理" variant="outline" onClick={onRefresh} loading={isLoading}>
-                    <FiRefreshCw />
-                </IconButton>
-                <IconButton aria-label="新增任務" variant="solid" colorPalette="blue" onClick={onOpenDrawer}>
-                    <FiPlus />
-                </IconButton>
-            </Stack>
-        </Flex>
+                </Typography>
+                <Stack direction="row" spacing={0.5}>
+                    <IconButton onClick={onRefresh} aria-label="重新整理" disabled={isLoading} color="inherit">
+                        {isLoading ? <CircularProgress size={22} /> : <RefreshIcon />}
+                    </IconButton>
+                </Stack>
+            </Toolbar>
+            {children}
+        </AppBar>
     );
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Text} from "@chakra-ui/react";
+import {Box, Typography} from "@mui/material";
 
 interface ErrorDisplayProps {
     error: string;
@@ -7,10 +7,17 @@ interface ErrorDisplayProps {
 
 export const ErrorDisplay = React.memo(({error}: ErrorDisplayProps) => {
     return (
-        <Box borderWidth="1px" borderColor="red.subtle" bg="red.subtle" borderRadius="lg" p="3">
-            <Text color="red.fg" fontSize="sm">
+        <Box
+            sx={{
+                backgroundColor: "#fdecea",
+                borderRadius: 3,
+                px: 2,
+                py: 1.5,
+            }}
+        >
+            <Typography variant="body2" color="error.dark" sx={{fontWeight: 500}}>
                 {error}
-            </Text>
+            </Typography>
         </Box>
     );
 });

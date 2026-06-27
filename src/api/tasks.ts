@@ -3,7 +3,7 @@ import {apiClient} from "../utils/apiClient";
 
 export type TaskStatus = "pending" | "completed";
 
-export type TaskFilter = "all" | "today" | "this_week" | "overdue";
+export type TaskFilter = "all" | "today" | "this_week" | "overdue" | "done" | "pending";
 
 export type Task = {
     id: string;

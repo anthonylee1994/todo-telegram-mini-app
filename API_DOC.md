@@ -37,9 +37,9 @@ Frontend example:
 const initData = window.Telegram.WebApp.initData;
 
 const response = await fetch(`${apiBaseUrl}/tasks`, {
-  headers: {
-    "X-Telegram-Init-Data": initData,
-  },
+    headers: {
+        "X-Telegram-Init-Data": initData,
+    },
 });
 ```
 
@@ -51,7 +51,7 @@ If authentication fails, the API returns:
 
 ```json
 {
-  "error": "Unauthorized"
+    "error": "Unauthorized"
 }
 ```
 
@@ -59,14 +59,14 @@ If authentication fails, the API returns:
 
 ```json
 {
-  "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
-  "title": "Buy milk",
-  "description": "Oat milk",
-  "due_date": "2026-06-26T10:00:00.000Z",
-  "status": "pending",
-  "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
-  "created_at": "2026-06-26T02:00:00.000Z",
-  "updated_at": "2026-06-26T02:00:00.000Z"
+    "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
+    "title": "Buy milk",
+    "description": "Oat milk",
+    "due_date": "2026-06-26T10:00:00.000Z",
+    "status": "pending",
+    "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
+    "created_at": "2026-06-26T02:00:00.000Z",
+    "updated_at": "2026-06-26T02:00:00.000Z"
 }
 ```
 
@@ -111,16 +111,16 @@ Success:
 
 ```json
 [
-  {
-    "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
-    "title": "Buy milk",
-    "description": null,
-    "due_date": "2026-06-26T10:00:00.000Z",
-    "status": "pending",
-    "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
-    "created_at": "2026-06-26T02:00:00.000Z",
-    "updated_at": "2026-06-26T02:00:00.000Z"
-  }
+    {
+        "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
+        "title": "Buy milk",
+        "description": null,
+        "due_date": "2026-06-26T10:00:00.000Z",
+        "status": "pending",
+        "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
+        "created_at": "2026-06-26T02:00:00.000Z",
+        "updated_at": "2026-06-26T02:00:00.000Z"
+    }
 ]
 ```
 
@@ -144,14 +144,14 @@ Success:
 
 ```json
 {
-  "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
-  "title": "Buy milk",
-  "description": null,
-  "due_date": null,
-  "status": "pending",
-  "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
-  "created_at": "2026-06-26T02:00:00.000Z",
-  "updated_at": "2026-06-26T02:00:00.000Z"
+    "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
+    "title": "Buy milk",
+    "description": null,
+    "due_date": null,
+    "status": "pending",
+    "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
+    "created_at": "2026-06-26T02:00:00.000Z",
+    "updated_at": "2026-06-26T02:00:00.000Z"
 }
 ```
 
@@ -163,7 +163,7 @@ If the task does not exist, or belongs to another user:
 
 ```json
 {
-  "error": "Task not found"
+    "error": "Task not found"
 }
 ```
 
@@ -178,12 +178,12 @@ Request body:
 
 ```json
 {
-  "task": {
-    "title": "Buy milk",
-    "description": "Oat milk",
-    "due_date": "2026-06-26T10:00:00Z",
-    "status": "pending"
-  }
+    "task": {
+        "title": "Buy milk",
+        "description": "Oat milk",
+        "due_date": "2026-06-26T10:00:00Z",
+        "status": "pending"
+    }
 }
 ```
 
@@ -204,14 +204,14 @@ Success:
 
 ```json
 {
-  "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
-  "title": "Buy milk",
-  "description": "Oat milk",
-  "due_date": "2026-06-26T10:00:00.000Z",
-  "status": "pending",
-  "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
-  "created_at": "2026-06-26T02:00:00.000Z",
-  "updated_at": "2026-06-26T02:00:00.000Z"
+    "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
+    "title": "Buy milk",
+    "description": "Oat milk",
+    "due_date": "2026-06-26T10:00:00.000Z",
+    "status": "pending",
+    "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
+    "created_at": "2026-06-26T02:00:00.000Z",
+    "updated_at": "2026-06-26T02:00:00.000Z"
 }
 ```
 
@@ -223,7 +223,7 @@ Validation error:
 
 ```json
 {
-  "errors": ["Title can't be blank"]
+    "errors": ["Title can't be blank"]
 }
 ```
 
@@ -243,12 +243,12 @@ Request body:
 
 ```json
 {
-  "task": {
-    "title": "Buy oat milk",
-    "description": "Unsweetened",
-    "due_date": "2026-06-27T12:00:00Z",
-    "status": "completed"
-  }
+    "task": {
+        "title": "Buy oat milk",
+        "description": "Unsweetened",
+        "due_date": "2026-06-27T12:00:00Z",
+        "status": "completed"
+    }
 }
 ```
 
@@ -262,14 +262,14 @@ Success:
 
 ```json
 {
-  "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
-  "title": "Buy oat milk",
-  "description": "Unsweetened",
-  "due_date": "2026-06-27T12:00:00.000Z",
-  "status": "completed",
-  "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
-  "created_at": "2026-06-26T02:00:00.000Z",
-  "updated_at": "2026-06-26T03:00:00.000Z"
+    "id": "9d7f9f5f-8c9b-4b8f-9f79-8c6f5a4b2f17",
+    "title": "Buy oat milk",
+    "description": "Unsweetened",
+    "due_date": "2026-06-27T12:00:00.000Z",
+    "status": "completed",
+    "user_id": "2a0f5b7c-18d8-4c34-9a11-3d756a7b4a02",
+    "created_at": "2026-06-26T02:00:00.000Z",
+    "updated_at": "2026-06-26T03:00:00.000Z"
 }
 ```
 
@@ -281,7 +281,7 @@ Validation error:
 
 ```json
 {
-  "errors": ["Status is not included in the list"]
+    "errors": ["Status is not included in the list"]
 }
 ```
 
@@ -307,7 +307,7 @@ If the task does not exist, or belongs to another user:
 
 ```json
 {
-  "error": "Task not found"
+    "error": "Task not found"
 }
 ```
 
@@ -315,37 +315,34 @@ If the task does not exist, or belongs to another user:
 
 ```ts
 type ApiOptions = RequestInit & {
-  json?: unknown;
+    json?: unknown;
 };
 
 export async function apiFetch(path: string, options: ApiOptions = {}) {
-  const headers = new Headers(options.headers);
-  headers.set("X-Telegram-Init-Data", window.Telegram.WebApp.initData);
+    const headers = new Headers(options.headers);
+    headers.set("X-Telegram-Init-Data", window.Telegram.WebApp.initData);
 
-  if (options.json !== undefined) {
-    headers.set("Content-Type", "application/json");
-  }
+    if (options.json !== undefined) {
+        headers.set("Content-Type", "application/json");
+    }
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-    body:
-      options.json === undefined ? options.body : JSON.stringify(options.json),
-  });
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${path}`, {
+        ...options,
+        headers,
+        body: options.json === undefined ? options.body : JSON.stringify(options.json),
+    });
 
-  if (response.status === 204) {
-    return null;
-  }
+    if (response.status === 204) {
+        return null;
+    }
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (!response.ok) {
-    throw new Error(
-      data.error || data.errors?.join(", ") || "API request failed",
-    );
-  }
+    if (!response.ok) {
+        throw new Error(data.error || data.errors?.join(", ") || "API request failed");
+    }
 
-  return data;
+    return data;
 }
 ```
 
@@ -355,13 +352,13 @@ Example usage:
 const tasks = await apiFetch("/tasks?sort_by=due_date&order=asc");
 
 const task = await apiFetch("/tasks", {
-  method: "POST",
-  json: {
-    task: {
-      title: "Buy milk",
-      due_date: "2026-06-26T10:00:00Z",
+    method: "POST",
+    json: {
+        task: {
+            title: "Buy milk",
+            due_date: "2026-06-26T10:00:00Z",
+        },
     },
-  },
 });
 ```
 

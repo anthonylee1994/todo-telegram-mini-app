@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Container, Stack} from "@chakra-ui/react";
+import {Box, Container, Fab, Stack} from "@mui/material";
 import {type Task, type TaskInput} from "./api/tasks";
 import {type TaskFormState} from "./utils/taskUtil";
 import {useTaskStore} from "./stores/useTaskStore";
@@ -9,10 +9,10 @@ import {TaskFilter as TaskFilterComponent} from "./components/TaskFilter";
 import {TaskCard} from "./components/TaskCard";
 import {LoadingState} from "./components/LoadingState";
 import {EmptyState} from "./components/EmptyState";
-import {ErrorDisplay} from "./components/ErrorDisplay";
 import {useTelegram} from "./hooks/useTelegram";
 import {useTaskLoading} from "./hooks/useTaskLoading";
 import {getDefaultDueDate, getTaskFormState} from "./utils/taskUtil";
+import AddIcon from "@mui/icons-material/Add";
 
 export const App = React.memo(() => {
     const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
@@ -27,7 +27,6 @@ export const App = React.memo(() => {
     const filter = useTaskStore(state => state.filter);
     const isLoading = useTaskStore(state => state.isLoading);
     const isSaving = useTaskStore(state => state.isSaving);
-    const error = useTaskStore(state => state.error);
     const setFilter = useTaskStore(state => state.setFilter);
     const loadTasks = useTaskStore(state => state.loadTasks);
     const addTask = useTaskStore(state => state.addTask);
@@ -88,27 +87,30 @@ export const App = React.memo(() => {
     };
 
     return (
-        <Box minH="100vh" bg="bg.subtle" color="fg.default">
-            <Container maxW="lg" px="4" py={{base: "5", md: "8"}}>
-                <Stack gap="5">
-                    <Header isLoading={isLoading} onRefresh={handleRefresh} onOpenDrawer={handleOpenCreateDrawer} />
+        <Box sx={{display: "flex", flexDirection: "column", height: "100dvh"}}>
+            <Header isLoading={isLoading} onRefresh={handleRefresh}>
+                <TaskFilterComponent value={filter} onChange={setFilter} />
+            </Header>
+            <Container
+                maxWidth="sm"
+                disableGutters
+                sx={{
+                    flex: 1,
+                    backgroundColor: "white",
+                    pb: "env(safe-area-inset-bottom)",
+                }}
+            >
+                {isLoading ? <LoadingState /> : null}
 
-                    <TaskFilterComponent value={filter} onChange={setFilter} />
+                {!isLoading && tasks.length === 0 ? <EmptyState /> : null}
 
-                    {error ? <ErrorDisplay error={error} /> : null}
-
-                    {isLoading ? <LoadingState /> : null}
-
-                    {!isLoading && tasks.length === 0 ? <EmptyState /> : null}
-
-                    {!isLoading && tasks.length > 0 ? (
-                        <Stack gap="3">
-                            {tasks.map((task: Task) => (
-                                <TaskCard key={task.id} task={task} onEdit={handleOpenEditDrawer} />
-                            ))}
-                        </Stack>
-                    ) : null}
-                </Stack>
+                {!isLoading && tasks.length > 0 ? (
+                    <Stack spacing={0} sx={{pb: 15}}>
+                        {tasks.map((task: Task) => (
+                            <TaskCard key={task.id} task={task} onEdit={handleOpenEditDrawer} />
+                        ))}
+                    </Stack>
+                ) : null}
             </Container>
 
             <TaskDrawer
@@ -123,6 +125,18 @@ export const App = React.memo(() => {
                 onSubmit={handleTaskSubmit}
                 onClearForm={handleClearForm}
             />
+
+            <Fab
+                color="primary"
+                onClick={handleOpenCreateDrawer}
+                sx={{
+                    position: "fixed",
+                    bottom: "calc(env(safe-area-inset-bottom) + 40px)",
+                    right: 30,
+                }}
+            >
+                <AddIcon />
+            </Fab>
         </Box>
     );
 });

@@ -1,9 +1,10 @@
 import React from "react";
-import {Button, Drawer, Field, Input, Portal, Stack, Textarea} from "@chakra-ui/react";
-import {FiCheck, FiPlus} from "react-icons/fi";
+import {Button, Drawer, TextField, Stack, Typography, Box, IconButton} from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import {type TaskInput} from "../api/tasks";
 import {getCreateTaskInput, getUpdateTaskInput, type TaskFormState} from "../utils/taskUtil";
-import {toaster} from "./ui/toaster";
 
 type TaskDrawerMode = "create" | "edit";
 
@@ -20,6 +21,14 @@ interface TaskDrawerProps {
     onClearForm: () => void;
 }
 
+function showMessage(message: string) {
+    window.alert(message);
+}
+
+function showError(title: string, error: unknown) {
+    window.alert(`${title}\n${error instanceof Error ? error.message : "請再試一次"}`);
+}
+
 export const TaskDrawer = React.memo(({isOpen, mode, onClose, form, isSaving, onTitleChange, onDescriptionChange, onDueDateChange, onSubmit, onClearForm}: TaskDrawerProps) => {
     const isEditMode = mode === "edit";
     const title = isEditMode ? "編輯任務" : "新增任務";
@@ -29,10 +38,7 @@ export const TaskDrawer = React.memo(({isOpen, mode, onClose, form, isSaving, on
         event.preventDefault();
 
         if (!form.title.trim()) {
-            toaster.create({
-                title: "要填填標題",
-                type: "warning",
-            });
+            showMessage("要填填標題");
             return;
         }
 
@@ -40,64 +46,43 @@ export const TaskDrawer = React.memo(({isOpen, mode, onClose, form, isSaving, on
             await onSubmit(isEditMode ? getUpdateTaskInput(form) : getCreateTaskInput(form));
             onClearForm();
             onClose();
-            toaster.create({
-                title: isEditMode ? "已更新任務" : "已新增任務",
-                type: "success",
-            });
         } catch (submitError) {
-            toaster.create({
-                title: isEditMode ? "更新唔到" : "新增唔到",
-                description: submitError instanceof Error ? submitError.message : "請再試一次",
-                type: "error",
-            });
+            showError(isEditMode ? "更新唔到" : "新增唔到", submitError);
         }
     };
 
     return (
-        <Drawer.Root
-            open={isOpen}
-            placement="bottom"
-            size="full"
-            onOpenChange={details => {
-                if (!details.open) {
-                    onClose();
-                }
-            }}
-        >
-            <Portal>
-                <Drawer.Backdrop />
-                <Drawer.Positioner>
-                    <Drawer.Content borderTopRadius="2xl" h="auto" maxH="calc(100dvh - 3rem)">
-                        <Drawer.Header>
-                            <Drawer.Title>{title}</Drawer.Title>
-                            <Drawer.CloseTrigger />
-                        </Drawer.Header>
-                        <Drawer.Body pb="calc(var(--chakra-spacing-6) + max(env(safe-area-inset-bottom), var(--app-safe-area-inset-bottom, 0px)))">
-                            <form onSubmit={handleSubmit}>
-                                <Stack gap="4">
-                                    <Field.Root required>
-                                        <Field.Label>標題</Field.Label>
-                                        <Input value={form.title} onChange={event => onTitleChange(event.target.value)} />
-                                    </Field.Root>
-                                    <Field.Root>
-                                        <Field.Label>備註</Field.Label>
-                                        <Textarea value={form.description} onChange={event => onDescriptionChange(event.target.value)} placeholder="可留空" resize="vertical" />
-                                    </Field.Root>
-                                    <Field.Root>
-                                        <Field.Label>日期</Field.Label>
-                                        <Input type="datetime-local" value={form.dueDate} onChange={event => onDueDateChange(event.target.value)} />
-                                        <Field.HelperText>選擇日期同時間，預設當前時間。</Field.HelperText>
-                                    </Field.Root>
-                                    <Button type="submit" colorPalette="blue" loading={isSaving} width="100%">
-                                        {isEditMode ? <FiCheck /> : <FiPlus />}
-                                        {submitLabel}
-                                    </Button>
-                                </Stack>
-                            </form>
-                        </Drawer.Body>
-                    </Drawer.Content>
-                </Drawer.Positioner>
-            </Portal>
-        </Drawer.Root>
+        <Drawer anchor="bottom" open={isOpen} onClose={onClose}>
+            <Stack sx={{p: 3, mb: "calc(env(safe-area-inset-bottom) + 20px)"}}>
+                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2}}>
+                    <Typography variant="h6">{title}</Typography>
+                    <IconButton onClick={onClose} sx={{minWidth: "auto"}}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+                <form onSubmit={handleSubmit}>
+                    <Stack spacing={3}>
+                        <TextField label="標題" value={form.title} onChange={event => onTitleChange(event.target.value)} required fullWidth />
+                        <TextField label="備註" value={form.description} onChange={event => onDescriptionChange(event.target.value)} placeholder="可留空" multiline rows={4} fullWidth />
+                        <TextField
+                            label="日期"
+                            type="datetime-local"
+                            value={form.dueDate}
+                            onChange={event => onDueDateChange(event.target.value)}
+                            fullWidth
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                },
+                            }}
+                            helperText="選擇日期同時間，預設當前時間。"
+                        />
+                        <Button size="large" type="submit" variant="contained" disabled={isSaving} fullWidth startIcon={isEditMode ? <CheckIcon /> : <AddIcon />}>
+                            {submitLabel}
+                        </Button>
+                    </Stack>
+                </form>
+            </Stack>
+        </Drawer>
     );
 });

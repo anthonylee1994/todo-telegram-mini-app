@@ -1,12 +1,13 @@
+import {CssBaseline, createTheme, ThemeProvider} from "@mui/material";
 import ReactDOM from "react-dom/client";
 import {App} from "./app.tsx";
-import {Provider} from "./components/ui/provider";
-import {Toaster} from "./components/ui/toaster";
 import "./index.css";
 
+const theme = createTheme();
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <Provider>
+    <ThemeProvider theme={theme}>
+        <CssBaseline />
         <App />
-        <Toaster />
-    </Provider>
+    </ThemeProvider>
 );

@@ -1,5 +1,5 @@
 import React from "react";
-import {AppBar, IconButton, Stack, Toolbar, Typography} from "@mui/material";
+import {AppBar, CircularProgress, IconButton, Stack, Toolbar, Typography} from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 interface HeaderProps {
@@ -17,7 +17,7 @@ export const Header = React.memo(({isLoading, onRefresh, children}: HeaderProps)
                 </Typography>
                 <Stack direction="row" spacing={0.5}>
                     <IconButton onClick={onRefresh} aria-label="重新整理" disabled={isLoading} color="inherit">
-                        <RefreshIcon />
+                        {isLoading ? <CircularProgress sx={{color: "white"}} size={18} /> : <RefreshIcon />}
                     </IconButton>
                 </Stack>
             </Toolbar>

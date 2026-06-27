@@ -1,9 +1,9 @@
+import {useWebApp} from "@vkruglikov/react-telegram-web-app";
 import {useEffect} from "react";
 
 export function useTelegram() {
+    const webApp = useWebApp();
     useEffect(() => {
-        const webApp = window.Telegram?.WebApp;
-
         function syncSafeAreaInset() {
             const bottomInset = Math.max(webApp?.contentSafeAreaInset?.bottom ?? 0, webApp?.safeAreaInset?.bottom ?? 0);
             document.documentElement.style.setProperty("--app-safe-area-inset-bottom", `${bottomInset}px`);
@@ -22,5 +22,5 @@ export function useTelegram() {
             webApp?.offEvent?.("safeAreaChanged", syncSafeAreaInset);
             webApp?.offEvent?.("viewportChanged", syncSafeAreaInset);
         };
-    }, []);
+    }, [webApp]);
 }

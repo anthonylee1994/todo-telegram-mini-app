@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {type Task} from "../api/tasks";
 import {useTaskStore} from "../stores/useTaskStore";
 import {formatDueDate, getDueDateBadgeColor} from "../utils/taskUtil";
+import {useShowPopup} from "@vkruglikov/react-telegram-web-app";
 
 interface TaskCardProps {
     task: Task;
@@ -21,10 +22,6 @@ async function confirmDelete() {
     return new Promise<boolean>(resolve => {
         showConfirm("確定要刪除呢個任務？", resolve);
     });
-}
-
-function showError(title: string, error: unknown) {
-    window.alert(`${title}\n${error instanceof Error ? error.message : "請再試一次"}`);
 }
 
 function getMuiDueDateColor(task: Task): ChipProps["color"] {
@@ -48,6 +45,7 @@ function getMuiDueDateColor(task: Task): ChipProps["color"] {
 export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
     const toggleTask = useTaskStore(state => state.toggleTask);
     const removeTask = useTaskStore(state => state.removeTask);
+    const showPopup = useShowPopup();
 
     const isCompleted = task.status === "completed";
 
@@ -55,7 +53,7 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
         try {
             await toggleTask(task);
         } catch (error) {
-            showError("更新唔到", error);
+            showPopup({title: "更新唔到", message: error});
         }
     };
 
@@ -69,7 +67,7 @@ export const TaskCard = React.memo(({task, onEdit}: TaskCardProps) => {
         try {
             await removeTask(task.id);
         } catch (error) {
-            showError("刪除唔到", error);
+            showPopup({title: "刪除唔到", message: error});
         }
     };
 

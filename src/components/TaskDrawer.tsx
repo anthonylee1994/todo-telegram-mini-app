@@ -1,8 +1,8 @@
 import React from "react";
 import {Drawer, TextField, Stack, Typography, Box} from "@mui/material";
-import {type TaskInput} from "../api/tasks";
+import {type TaskInput} from "@/api/tasks";
 import {BackButton, MainButton, useShowPopup} from "@vkruglikov/react-telegram-web-app";
-import {getCreateTaskInput, getUpdateTaskInput, type TaskFormState} from "../utils/taskUtil";
+import {getCreateTaskInput, getUpdateTaskInput, type TaskFormState} from "@/utils/taskUtil";
 
 type TaskDrawerMode = "create" | "edit";
 

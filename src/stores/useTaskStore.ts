@@ -1,5 +1,5 @@
 import {create} from "zustand";
-import {createTask, deleteTask, fetchTasks, type Task, type TaskFilter, type TaskInput, updateTask} from "../api/tasks";
+import {createTask, deleteTask, fetchTasks, type Task, type TaskFilter, type TaskInput, updateTask} from "@/api/tasks";
 
 type TaskStore = {
     tasks: Task[];

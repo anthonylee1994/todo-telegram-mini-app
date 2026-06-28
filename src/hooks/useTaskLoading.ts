@@ -1,6 +1,6 @@
 import {useEffect} from "react";
-import {useTaskStore} from "../stores/useTaskStore";
-import {type TaskFilter} from "../api/tasks";
+import {useTaskStore} from "@/stores/useTaskStore";
+import {type TaskFilter} from "@/api/tasks";
 
 export function useTaskLoading(filter: TaskFilter) {
     const loadTasks = useTaskStore(state => state.loadTasks);

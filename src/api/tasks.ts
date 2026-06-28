@@ -1,5 +1,5 @@
 import {AxiosError, type AxiosRequestConfig} from "axios";
-import {apiClient} from "../utils/apiClient";
+import {apiClient} from "@/utils/apiClient";
 
 export type TaskStatus = "pending" | "completed";
 

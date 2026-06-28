@@ -1,9 +1,9 @@
 import React from "react";
 import {Checkbox as MuiCheckbox, Stack, Typography, Chip, IconButton, ListItem, ListItemIcon, ListItemText, type ChipProps, ListItemButton} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {type Task} from "../api/tasks";
-import {useTaskStore} from "../stores/useTaskStore";
-import {formatDueDate, getDueDateBadgeColor} from "../utils/taskUtil";
+import {type Task} from "@/api/tasks";
+import {useTaskStore} from "@/stores/useTaskStore";
+import {formatDueDate, getDueDateBadgeColor} from "@/utils/taskUtil";
 import {useShowPopup} from "@vkruglikov/react-telegram-web-app";
 
 interface TaskCardProps {

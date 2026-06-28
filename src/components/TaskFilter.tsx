@@ -1,6 +1,6 @@
 import React from "react";
 import {Tabs, Tab} from "@mui/material";
-import {type TaskFilter as TaskFilterType} from "../api/tasks";
+import {type TaskFilter as TaskFilterType} from "@/api/tasks";
 
 const filterOptions: Array<{label: string; value: TaskFilterType}> = [
     {label: "全部", value: "all"},

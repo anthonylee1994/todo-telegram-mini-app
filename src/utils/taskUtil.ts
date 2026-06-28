@@ -1,5 +1,5 @@
 import moment from "moment";
-import {type Task} from "../api/tasks";
+import {type Task} from "@/api/tasks";
 
 export type TaskFormState = {
     title: string;
